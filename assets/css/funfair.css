@@ -1,0 +1,249 @@
+.live-dot {
+    animation: live-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.winner-flash {
+    border: 3px solid #ffc107 !important;
+    animation: winner-glow 2s ease-in-out infinite;
+}
+
+@keyframes winner-glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(255, 193, 7, 0.9);
+    }
+}
+
+.jumbotron-style {
+    background: linear-gradient(135deg, #eef4ff 0%, #ffffff 100%);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Live draw stage
+|--------------------------------------------------------------------------
+*/
+
+.draw-wheel-wrap {
+    position: relative;
+    width: 430px;
+    height: 430px;
+    margin: 0 auto;
+}
+
+.draw-wheel-rim {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 9px solid #111827;
+    background: repeating-conic-gradient(
+        #fbbf24 0deg 9deg,
+        rgba(251, 191, 36, 0.12) 9deg 45deg
+    );
+    -webkit-mask: radial-gradient(circle, transparent 71%, #000 72%, #000 82%, transparent 83%);
+    mask: radial-gradient(circle, transparent 71%, #000 72%, #000 82%, transparent 83%);
+    box-shadow: 0 0 0 3px #1e3a8a, 0 0 45px rgba(37, 99, 235, 0.55);
+    animation: rim-pulse 1.6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes rim-pulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.draw-wheel {
+    position: absolute;
+    inset: 0;
+    transform-origin: center;
+}
+
+.wheel-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: #fff;
+    background: linear-gradient(145deg, #1e3a8a, #2563eb);
+    border-radius: 14px;
+    border: 3px solid #93c5fd;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    padding: 4px;
+    overflow: hidden;
+}
+
+.wheel-box.box-winner {
+    background: linear-gradient(145deg, #b45309, #f59e0b);
+    border-color: #fde68a;
+    box-shadow: 0 0 45px rgba(245, 158, 11, 0.95);
+    animation: winner-glow 1s ease-in-out infinite;
+    z-index: 3;
+}
+
+.draw-wheel-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fbbf24, #b45309);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    font-weight: 800;
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.7);
+    border: 4px solid #fde68a;
+    z-index: 2;
+}
+
+.winner-reveal {
+    margin-top: 28px;
+    padding: 28px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #fff7ed, #fffbeb);
+    border: 3px solid #f59e0b;
+    animation: reveal-pop 0.6s ease-out;
+}
+
+@keyframes reveal-pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    70% { transform: scale(1.06); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.winner-prize-tag {
+    padding: 10px 26px;
+    border-radius: 50px;
+    background: #f59e0b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Confetti
+|--------------------------------------------------------------------------
+*/
+
+.confetti-holder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    border-radius: 3px;
+    opacity: 0.95;
+    animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+    0% { transform: translateY(-20px) rotate(0deg); }
+    100% { transform: translateY(105vh) rotate(720deg); }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Draw countdown overlay (10, 9, 8 ... 0, then "Let's Start!")
+|--------------------------------------------------------------------------
+*/
+
+.draw-countdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 23, 0.88);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.draw-countdown-num {
+    font-size: 18rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fbbf24;
+    text-shadow: 0 0 40px rgba(251, 191, 36, 0.8), 0 0 120px rgba(251, 191, 36, 0.5);
+    animation: countdown-glow 1s ease-in-out infinite;
+}
+
+.draw-countdown-num.pop {
+    animation: countdown-pop 0.9s ease-out;
+}
+
+@keyframes countdown-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    45% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes countdown-glow {
+    0%, 100% {
+        text-shadow: 0 0 40px rgba(251, 191, 36, 0.8), 0 0 120px rgba(251, 191, 36, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 60px rgba(251, 191, 36, 1), 0 0 160px rgba(251, 191, 36, 0.7);
+    }
+}
+
+.draw-lets-start {
+    font-size: 7rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: lets-start-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes lets-start-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
