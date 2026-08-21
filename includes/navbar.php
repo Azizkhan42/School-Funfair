@@ -45,24 +45,6 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/registrations.php"
-                    >
-                        Registrations
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        href="/school-funfair/funfair/register.php"
-                    >
-                        Student Apply
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
                         href="/school-funfair/funfair/tickets.php"
                     >
                         Tickets

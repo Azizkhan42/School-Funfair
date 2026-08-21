@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $eventId = filter_input(INPUT_POST, 'event_id', FILTER_VALIDATE_INT);
 
+    $ticketQty = filter_input(INPUT_POST, 'ticket_quantity', FILTER_VALIDATE_INT);
+
     $action = $_POST['action'] ?? 'register';
 
     if ($eventId) {
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $eventCheck = $pdo->prepare("
 
-                SELECT event_name, status
+                SELECT event_name, status, max_tickets_per_student
 
                 FROM lucky_draw_events
 
@@ -44,6 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$eventRow) {
 
                 $errors[] = 'This event is not accepting registrations.';
+
+            } elseif (
+                !$ticketQty ||
+                $ticketQty < 1 ||
+                $ticketQty > (int)$eventRow['max_tickets_per_student']
+            ) {
+
+                $errors[] =
+                    'Please choose between 1 and ' .
+                    (int)$eventRow['max_tickets_per_student'] .
+                    ' tickets.';
 
             } else {
 
@@ -65,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ((int)$checkStmt->fetchColumn() > 0) {
 
-                    $errors[] = 'You have already registered for this event.';
+                    $errors[] = 'You are already registered for this event.';
 
                 } else {
 
@@ -79,6 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             (
                                 event_id,
                                 student_id,
+                                teacher_id,
+                                ticket_quantity,
                                 registered_at,
                                 status
                             )
@@ -86,22 +101,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             (
                                 :event_id,
                                 :student_id,
+                                :teacher_id,
+                                :ticket_quantity,
                                 GETDATE(),
-                                'REGISTERED'
+                                'PENDING'
                             )
 
                         ");
 
                         $insertStmt->execute([
                             ':event_id' => $eventId,
-                            ':student_id' => $studentId
+                            ':student_id' => $studentId,
+                            ':teacher_id' => $currentStudent['teacher_id'],
+                            ':ticket_quantity' => $ticketQty
                         ]);
 
                         $pdo->commit();
 
-                        $success = 'You are registered for "' .
-                            $eventRow['event_name'] .
-                            '". Your concern teacher can now issue your ticket.';
+                        $success =
+                            'Registration Successful! You requested ' .
+                            $ticketQty .
+                            ' ticket(s). Status: Pending Teacher Approval / Ticket Issuance.';
 
                         logAudit(
                             $pdo,
@@ -135,39 +155,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } elseif ($action === 'cancel') {
 
-            $cancelStmt = $pdo->prepare("
+            $ticketCheck = $pdo->prepare("
 
-                DELETE FROM lucky_draw_registrations
+                SELECT COUNT(*)
+
+                FROM lucky_draw_tickets
 
                 WHERE event_id = :event_id
                   AND student_id = :student_id
 
             ");
 
-            $cancelStmt->execute([
+            $ticketCheck->execute([
                 ':event_id' => $eventId,
                 ':student_id' => $studentId
             ]);
 
-            if ($cancelStmt->rowCount() > 0) {
+            if ((int)$ticketCheck->fetchColumn() > 0) {
 
-                $success = 'Your registration was cancelled.';
+                $errors[] =
+                    'Tickets have already been issued for this registration. ' .
+                    'Please contact your teacher to cancel.';
 
-                logAudit(
-                    $pdo,
-                    1,
-                    'REGISTRATION_REMOVED',
-                    'EVENT',
-                    $eventId,
-                    $eventId,
-                    'Student ' .
-                        $currentStudent['student_name'] .
-                        ' (ID ' .
-                        $studentId .
-                        ') cancelled registration for event ID ' .
-                        $eventId .
-                        '.'
-                );
+            } else {
+
+                $cancelStmt = $pdo->prepare("
+
+                    DELETE FROM lucky_draw_registrations
+
+                    WHERE event_id = :event_id
+                      AND student_id = :student_id
+
+                ");
+
+                $cancelStmt->execute([
+                    ':event_id' => $eventId,
+                    ':student_id' => $studentId
+                ]);
+
+                if ($cancelStmt->rowCount() > 0) {
+
+                    $success = 'Your registration was cancelled.';
+
+                    logAudit(
+                        $pdo,
+                        1,
+                        'REGISTRATION_REMOVED',
+                        'EVENT',
+                        $eventId,
+                        $eventId,
+                        'Student ' .
+                            $currentStudent['student_name'] .
+                            ' (ID ' .
+                            $studentId .
+                            ') cancelled registration for event ID ' .
+                            $eventId .
+                            '.'
+                    );
+
+                }
 
             }
 
@@ -182,6 +228,8 @@ $pageTitle = 'Student Portal';
 require_once __DIR__ . '/../../includes/header.php';
 
 require_once __DIR__ . '/../../includes/navbar.php';
+
+require_once __DIR__ . '/../../includes/student-nav.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -198,6 +246,7 @@ $eventsStmt = $pdo->prepare("
         e.ticket_price,
         e.sales_start,
         e.sales_end,
+        e.max_tickets_per_student,
         CASE
             WHEN EXISTS (
                 SELECT 1
@@ -233,15 +282,23 @@ $myRegsStmt = $pdo->prepare("
     SELECT
         r.registration_id,
         r.registered_at,
+        r.status AS registration_status,
+        r.ticket_quantity,
         e.event_name,
-        e.status,
         e.ticket_price,
+        COALESCE(e.draw_date, e.sales_end) AS event_date,
         (
             SELECT COUNT(*)
             FROM lucky_draw_tickets t
             WHERE t.event_id = e.event_id
               AND t.student_id = r.student_id
-        ) AS my_tickets
+        ) AS ticket_count,
+        (
+            SELECT ISNULL(SUM(t.amount), 0)
+            FROM lucky_draw_tickets t
+            WHERE t.event_id = e.event_id
+              AND t.student_id = r.student_id
+        ) AS total_amount
 
     FROM lucky_draw_registrations r
 
@@ -405,14 +462,17 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
                                         </div>
 
                                         <div class="text-muted small">
-                                            Ticket: Rs.
-                                            <?= number_format($event['ticket_price'], 2) ?>
+                                            Event Date:
+                                            <?= date('d M Y', strtotime($event['sales_end'])) ?>
                                             •
-                                            Sales:
-                                            <?= date('d M Y h:i A', strtotime($event['sales_start'])) ?>
-                                            →
-                                            <?= date('d M Y h:i A', strtotime($event['sales_end'])) ?>
+                                            Ticket Price:
+                                            Rs.
+                                            <?= number_format($event['ticket_price'], 2) ?>
                                         </div>
+
+                                        <span class="badge bg-<?= $event['status'] === 'OPEN' ? 'success' : 'secondary' ?> mt-1">
+                                            <?= htmlspecialchars($event['status']) ?>
+                                        </span>
 
                                     </div>
 
@@ -444,7 +504,7 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
 
                                     <?php else: ?>
 
-                                        <form method="POST">
+                                        <form method="POST" class="text-end">
 
                                             <input
                                                 type="hidden"
@@ -457,6 +517,35 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
                                                 name="action"
                                                 value="register"
                                             >
+
+                                            <div class="mb-2">
+
+                                                <label class="form-label small fw-semibold mb-1">
+                                                    🎟️ How many tickets do you want?
+                                                </label>
+
+                                                <select
+                                                    name="ticket_quantity"
+                                                    class="form-select form-select-sm"
+                                                    style="min-width: 130px;"
+                                                    required
+                                                >
+
+                                                    <?php for ($i = 1; $i <= (int)$event['max_tickets_per_student']; $i++): ?>
+
+                                                        <option value="<?= $i ?>">
+                                                            <?= $i ?>
+                                                            Ticket<?= $i > 1 ? 's' : '' ?>
+                                                            (Rs.
+                                                            <?= number_format($i * $event['ticket_price'], 0) ?>
+                                                            )
+                                                        </option>
+
+                                                    <?php endfor; ?>
+
+                                                </select>
+
+                                            </div>
 
                                             <button
                                                 type="submit"
@@ -505,32 +594,78 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
 
                             <?php foreach ($myRegs as $reg): ?>
 
+                                <?php
+
+                                $isIssued = $reg['registration_status'] === 'TICKET_ISSUED';
+
+                                ?>
+
                                 <li class="list-group-item">
 
                                     <div class="d-flex justify-content-between">
 
                                         <div>
+
                                             <strong>
                                                 <?= htmlspecialchars($reg['event_name']) ?>
                                             </strong>
 
                                             <div class="text-muted small">
+                                                Event Date:
+                                                <?= date('d M Y', strtotime($reg['event_date'])) ?>
+                                                •
                                                 Registered:
                                                 <?= date('d M Y h:i A', strtotime($reg['registered_at'])) ?>
                                             </div>
+
+                                            <div class="small mt-1">
+                                                Requested:
+                                                <span class="fw-semibold">
+                                                    🎟️
+                                                    <?= (int)$reg['ticket_quantity'] ?>
+                                                    ticket<?= (int)$reg['ticket_quantity'] > 1 ? 's' : '' ?>
+                                                </span>
+                                            </div>
+
+                                            <div class="small mt-1">
+                                                Ticket:
+                                                <?php if ($isIssued && (int)$reg['ticket_count'] > 0): ?>
+                                                    <span class="fw-bold text-success">
+                                                        🎟️
+                                                        <?= (int)$reg['ticket_count'] ?>
+                                                        issued
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="text-muted">
+                                                        Pending
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+
                                         </div>
 
                                         <div class="text-end">
 
-                                            <span class="badge bg-<?= $reg['status'] === 'OPEN' ? 'success' : 'secondary' ?>">
-                                                <?= htmlspecialchars($reg['status']) ?>
+                                            <span class="badge bg-<?= $isIssued ? 'success' : 'warning text-dark' ?>">
+                                                <?= $isIssued ? 'Ticket Issued' : 'Pending' ?>
                                             </span>
 
-                                            <div class="small mt-1">
-                                                🎟️
-                                                <?= (int)$reg['my_tickets'] ?>
-                                                ticket<?= (int)$reg['my_tickets'] === 1 ? '' : 's' ?>
-                                            </div>
+                                            <?php if ($isIssued): ?>
+
+                                                <div class="small mt-1">
+                                                    Total:
+                                                    Rs.
+                                                    <?= number_format((float)$reg['total_amount'], 2) ?>
+                                                </div>
+
+                                                <a
+                                                    href="tickets.php"
+                                                    class="btn btn-sm btn-outline-primary mt-1"
+                                                >
+                                                    View Tickets
+                                                </a>
+
+                                            <?php endif; ?>
 
                                         </div>
 

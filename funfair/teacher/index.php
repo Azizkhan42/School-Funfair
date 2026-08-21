@@ -8,6 +8,8 @@ require_once __DIR__ . '/../../includes/header.php';
 
 require_once __DIR__ . '/../../includes/navbar.php';
 
+require_once __DIR__ . '/../../includes/teacher-nav.php';
+
 
 /*
 |--------------------------------------------------------------------------
@@ -73,10 +75,10 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <a
-            href="tickets.php"
+            href="registrations.php"
             class="btn btn-outline-primary"
         >
-            🎟️ My Ticket History
+            📋 FunFair Registrations
         </a>
 
     </div>

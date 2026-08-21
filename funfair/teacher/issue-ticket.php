@@ -166,7 +166,16 @@ $studentStmt = $pdo->prepare("
     SELECT
         s.student_id,
         s.student_name,
-        s.class_name
+        s.class_name,
+        r.ticket_quantity AS requested_quantity,
+        r.status AS registration_status,
+        (
+            SELECT COUNT(*)
+            FROM lucky_draw_tickets t
+            WHERE t.event_id = :event_id2
+              AND t.student_id = s.student_id
+              AND t.status IN ('ACTIVE', 'WINNER')
+        ) AS issued_count
 
     FROM test_students s
 
@@ -182,6 +191,7 @@ $studentStmt = $pdo->prepare("
 
 $studentStmt->execute([
     ':event_id' => $eventId,
+    ':event_id2' => $eventId,
     ':teacher_id' => $teacherId
 ]);
 
@@ -190,6 +200,12 @@ $students = $studentStmt->fetchAll(
 );
 
 $registeredCount = count($students);
+
+$preselectStudent = filter_input(
+    INPUT_GET,
+    'student_id',
+    FILTER_VALIDATE_INT
+);
 
 $errors = [];
 
@@ -340,30 +356,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             (int)$countStmt->fetchColumn();
 
 
-        $newTotal =
-            $existingTickets + $quantity;
-
-
-        if (
-            $newTotal >
-            $event[
-                'max_tickets_per_student'
-            ]
-        ) {
+        if ($existingTickets > 0) {
 
             $errors[] =
-                "Student already has " .
+                'Tickets have already been issued to this student ' .
+                '(' .
                 $existingTickets .
-                " ticket(s). " .
-                "Only " .
-                (
-                    $event[
-                        'max_tickets_per_student'
-                    ]
-                    -
-                    $existingTickets
-                ) .
-                " more ticket(s) can be issued.";
+                ' ticket(s)). Each student can receive tickets only once.';
 
         }
 
@@ -595,6 +594,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Mark registration as Ticket Issued
+            |--------------------------------------------------------------------------
+            */
+
+            $updateRegStmt = $pdo->prepare("
+
+                UPDATE lucky_draw_registrations
+
+                SET status = 'TICKET_ISSUED'
+
+                WHERE event_id = :event_id
+                  AND student_id = :student_id
+
+            ");
+
+            $updateRegStmt->execute([
+                ':event_id' => $eventId,
+                ':student_id' => $studentId
+            ]);
+
+
             $pdo->commit();
 
 
@@ -637,6 +659,8 @@ $pageTitle = 'Issue Lucky Draw Tickets';
 require_once __DIR__ . '/../../includes/header.php';
 
 require_once __DIR__ . '/../../includes/navbar.php';
+
+require_once __DIR__ . '/../../includes/teacher-nav.php';
 
 ?>
 
@@ -715,11 +739,11 @@ require_once __DIR__ . '/../../includes/navbar.php';
                 <strong>
                     <?= htmlspecialchars($currentTeacher['teacher_name']) ?>
                 </strong>
-                appear in the student list. Ask your students to register from the
-                <a href="../register.php">
-                    Student Registration
+                appear in the student list. Ask your students to register from their
+                <a href="../student/index.php">
+                    Student Portal
                 </a>
-                page first.
+                first.
             </div>
 
         </div>
@@ -756,8 +780,20 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
                                 <?php foreach ($students as $student): ?>
 
+                                    <?php
+
+                                    $isStudentIssued =
+                                        (int)$student['issued_count'] > 0 ||
+                                        $student['registration_status'] === 'TICKET_ISSUED';
+
+                                    ?>
+
                                     <option
                                         value="<?= $student['student_id'] ?>"
+                                        data-requested="<?= (int)$student['requested_quantity'] ?>"
+                                        data-issued="<?= (int)$student['issued_count'] ?>"
+                                        <?= $isStudentIssued ? 'disabled' : '' ?>
+                                        <?= !$isStudentIssued && $preselectStudent && $preselectStudent == $student['student_id'] ? 'selected' : '' ?>
                                     >
 
                                         <?= htmlspecialchars(
@@ -768,6 +804,18 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                         <?= htmlspecialchars(
                                             $student['class_name']
                                         ) ?>
+
+                                        <?php if ($isStudentIssued): ?>
+
+                                            (✅ tickets issued)
+
+                                        <?php else: ?>
+
+                                            (requested
+                                            <?= (int)$student['requested_quantity'] ?>
+                                            ticket<?= (int)$student['requested_quantity'] > 1 ? 's' : '' ?>)
+
+                                        <?php endif; ?>
 
                                     </option>
 
@@ -821,6 +869,11 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                 <?php endfor; ?>
 
                             </select>
+
+                            <div
+                                class="form-text"
+                                id="quantityHint"
+                            ></div>
 
                         </div>
 
@@ -927,11 +980,127 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
             </div>
 
+
+            <div class="card border-0 shadow-sm mt-4">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold">
+                        🎓 My Students — Status
+                    </h5>
+
+                    <hr>
+
+                    <?php if (count($students) === 0): ?>
+
+                        <p class="text-muted mb-0">
+                            No registered students yet.
+                        </p>
+
+                    <?php else: ?>
+
+                        <ul class="list-group list-group-flush">
+
+                            <?php foreach ($students as $student): ?>
+
+                                <?php
+
+                                $isStudentIssued =
+                                    (int)$student['issued_count'] > 0 ||
+                                    $student['registration_status'] === 'TICKET_ISSUED';
+
+                                ?>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+
+                                    <div>
+                                        <strong>
+                                            <?= htmlspecialchars($student['student_name']) ?>
+                                        </strong>
+
+                                        <div class="text-muted small">
+                                            <?= htmlspecialchars($student['class_name']) ?>
+                                            • requested
+                                            <?= (int)$student['requested_quantity'] ?>
+                                        </div>
+                                    </div>
+
+                                    <?php if ($isStudentIssued): ?>
+
+                                        <span class="badge bg-success">
+                                            ✅ Issued
+                                            <?= (int)$student['issued_count'] ?>
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="badge bg-warning text-dark">
+                                            Pending
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </li>
+
+                            <?php endforeach; ?>
+
+                        </ul>
+
+                    <?php endif; ?>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
 </div>
+
+<script>
+(function () {
+    var studentSelect = document.getElementById('student_id');
+    var quantitySelect = document.getElementById('quantity');
+    var hint = document.getElementById('quantityHint');
+
+    if (!studentSelect || !quantitySelect) {
+        return;
+    }
+
+    function applyRequested() {
+        var opt = studentSelect.options[studentSelect.selectedIndex];
+
+        if (!opt || !opt.value || opt.disabled) {
+            hint.textContent = '';
+            return;
+        }
+
+        var requested = parseInt(opt.getAttribute('data-requested'), 10) || 1;
+        var issued = parseInt(opt.getAttribute('data-issued'), 10) || 0;
+
+        var remaining = <?= (int)$event['max_tickets_per_student'] ?> - issued;
+
+        if (remaining < 1) {
+            remaining = 1;
+        }
+
+        var qty = Math.min(requested, remaining);
+
+        quantitySelect.value = String(qty);
+
+        hint.innerHTML =
+            'Student requested <strong>' + requested + '</strong> ticket' +
+            (requested > 1 ? 's' : '') +
+            ' — quantity pre-filled. Already issued: <strong>' +
+            issued + '</strong>.';
+    }
+
+    studentSelect.addEventListener('change', applyRequested);
+
+    applyRequested();
+})();
+</script>
 
 <?php
 

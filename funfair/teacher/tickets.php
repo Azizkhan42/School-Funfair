@@ -117,6 +117,8 @@ require_once __DIR__ . '/../../includes/header.php';
 
 require_once __DIR__ . '/../../includes/navbar.php';
 
+require_once __DIR__ . '/../../includes/teacher-nav.php';
+
 ?>
 
 <div class="container py-4">
