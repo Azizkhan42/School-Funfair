@@ -1,14 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../../includes/teacher-session.php';
+require_once __DIR__ . '/../includes/teacher-session.php';
 
 $pageTitle = 'Teacher - Lucky Draw';
 
-require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
-require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../includes/navbar.php';
 
-require_once __DIR__ . '/../../includes/teacher-nav.php';
+require_once __DIR__ . '/../includes/teacher-nav.php';
 
 
 /*
@@ -251,6 +251,6 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 
-require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';
 
 ?>

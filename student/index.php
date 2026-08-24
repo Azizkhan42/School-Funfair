@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../includes/student-session.php';
+require_once __DIR__ . '/../includes/student-session.php';
 
-require_once __DIR__ . '/../../includes/audit.php';
+require_once __DIR__ . '/../includes/audit.php';
 
 $errors = [];
 
@@ -225,11 +225,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageTitle = 'Student Portal';
 
-require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
-require_once __DIR__ . '/../../includes/navbar.php';
+require_once __DIR__ . '/../includes/navbar.php';
 
-require_once __DIR__ . '/../../includes/student-nav.php';
+require_once __DIR__ . '/../includes/student-nav.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -691,6 +691,6 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 
-require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';
 
 ?>

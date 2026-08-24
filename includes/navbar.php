@@ -3,9 +3,9 @@
 
         <a
             class="navbar-brand fw-bold"
-            href="/school-funfair/funfair/index.php"
+            href="/school-funfair/admin/index.php"
         >
-            🎟️ FunFair Lucky Draw
+            FunFair
         </a>
 
         <button
@@ -27,7 +27,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/index.php"
+                        href="/school-funfair/admin/index.php"
                     >
                         Dashboard
                     </a>
@@ -36,7 +36,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/events.php"
+                        href="/school-funfair/admin/events.php"
                     >
                         Events
                     </a>
@@ -45,7 +45,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/tickets.php"
+                        href="/school-funfair/admin/tickets.php"
                     >
                         Tickets
                     </a>
@@ -54,7 +54,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/prizes.php"
+                        href="/school-funfair/admin/prizes.php"
                     >
                         Prizes
                     </a>
@@ -63,7 +63,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/draw.php"
+                        href="/school-funfair/admin/draw.php"
                     >
                         Draw
                     </a>
@@ -72,7 +72,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/winners.php"
+                        href="/school-funfair/admin/winners.php"
                     >
                         Winners
                     </a>
@@ -81,7 +81,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/reports.php"
+                        href="/school-funfair/admin/reports.php"
                     >
                         Reports
                     </a>
@@ -90,7 +90,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/live.php"
+                        href="/school-funfair/admin/live.php"
                     >
                         Live TV
                     </a>
@@ -103,7 +103,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/student/index.php"
+                        href="/school-funfair/student/index.php"
                     >
                         🎓 Student
                     </a>
@@ -112,7 +112,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link"
-                        href="/school-funfair/funfair/teacher/index.php"
+                        href="/school-funfair/teacher/index.php"
                     >
                         👩‍🏫 Teacher
                     </a>
