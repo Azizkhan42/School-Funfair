@@ -273,9 +273,9 @@ if ($action === 'draw') {
 
         $student = $studentStmt->fetch(PDO::FETCH_ASSOC);
 
-        $winner['student_name'] = $student['student_name'] ?? '—';
+        $winner['student_name'] = $student['student_name'] ?? '-';
 
-        $winner['class_name'] = $student['class_name'] ?? '—';
+        $winner['class_name'] = $student['class_name'] ?? '-';
 
         $winner['prize_position'] = (int)$nextPrize['prize_position'];
 

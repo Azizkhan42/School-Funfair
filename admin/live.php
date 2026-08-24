@@ -97,7 +97,7 @@ $winners = [];
 
 /*
 |--------------------------------------------------------------------------
-| Demo mode (no database writes) — lets you watch the wheel animation
+| Demo mode (no database writes) - lets you watch the wheel animation
 |--------------------------------------------------------------------------
 */
 
@@ -294,16 +294,16 @@ require_once __DIR__ . '/../includes/navbar.php';
 
         <div>
             <h2 class="fw-bold mb-1">
-                📺 Live TV / Projector
+                <i class="bi bi-broadcast-pin"></i> Live TV / Projector
             </h2>
 
             <p class="text-muted mb-0">
-                Automatic lucky draw — as soon as sales close, the wheel spins and winners are announced one by one.
+                Automatic lucky draw - as soon as sales close, the wheel spins and winners are announced one by one.
             </p>
         </div>
 
         <span class="badge bg-danger live-dot">
-            ● LIVE
+            <i class="bi bi-broadcast"></i> LIVE
         </span>
 
     </div>
@@ -329,7 +329,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                                 <?= $selectedEvent == $ev['event_id'] ? 'selected' : '' ?>
                             >
                                 <?= htmlspecialchars($ev['event_name']) ?>
-                                (<?= htmlspecialchars($ev['status']) ?>) —
+                                (<?= htmlspecialchars($ev['status']) ?>) -
                                 <?= (int)$ev['available_prizes'] ?> prizes left
                             </option>
 
@@ -352,7 +352,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                         href="?event_id=<?= $selectedEvent ?>&demo=1"
                         class="btn btn-outline-warning w-100"
                     >
-                        ▶ Play Demo Animation
+                        <i class="bi bi-play-fill"></i> Play Demo Animation
                     </a>
 
                 </div>
@@ -382,7 +382,7 @@ require_once __DIR__ . '/../includes/navbar.php';
             <?php if ($demoMode): ?>
 
                 <div class="alert alert-warning border-0 rounded-0 mb-0 text-center fw-semibold">
-                    🎬 DEMO MODE — animations only, no real winners are drawn. <a href="?event_id=<?= $selectedEvent ?>">Exit demo</a>
+                    <i class="bi bi-film"></i> DEMO MODE - animations only, no real winners are drawn. <a href="?event_id=<?= $selectedEvent ?>">Exit demo</a>
                 </div>
 
             <?php endif; ?>
@@ -420,7 +420,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                         </div>
 
                         <div class="draw-wheel-center" id="wheelCenter">
-                            🎟️
+                            <i class="bi bi-ticket-perforated"></i>
                         </div>
 
                     </div>
@@ -440,7 +440,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                 <div class="card-body text-center py-5">
 
                     <div class="display-6 mb-3">
-                        ⏳
+                        <i class="bi bi-hourglass-split"></i>
                     </div>
 
                     <h4 class="fw-bold">
@@ -459,7 +459,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                 <div class="card-body text-center py-5">
 
                     <div class="display-6 mb-3">
-                        🎉
+                        <i class="bi bi-stars"></i>
                     </div>
 
                     <h4 class="fw-bold">
@@ -477,7 +477,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                 <div class="card-body text-center py-5">
 
                     <div class="display-6 mb-3">
-                        🎲
+                        <i class="bi bi-dice-5"></i>
                     </div>
 
                     <h4 class="fw-bold">
@@ -500,7 +500,7 @@ require_once __DIR__ . '/../includes/navbar.php';
             <div class="card-body">
 
                 <h4 class="fw-bold mb-3">
-                    🏆 Winners
+                    <i class="bi bi-trophy-fill"></i> Winners
                 </h4>
 
                 <div id="winnersGrid">
@@ -655,12 +655,12 @@ require_once __DIR__ . '/../includes/navbar.php';
             '<div class="card-body text-center py-5">' +
                 '<div class="fs-4 text-uppercase text-muted fw-semibold mb-1">Up Next</div>' +
                 '<div class="display-5 fw-bold text-primary mb-4" id="nextPrizeName">' +
-                    (s.next_prize ? escapeHtml(s.next_prize.prize_name) : (DEMO_MODE ? escapeHtml(DEMO_PRIZES[0] || 'Demo Prize') : '—')) +
+                    (s.next_prize ? escapeHtml(s.next_prize.prize_name) : (DEMO_MODE ? escapeHtml(DEMO_PRIZES[0] || 'Demo Prize') : '-')) +
                 '</div>' +
                 '<div class="draw-wheel-wrap mb-4">' +
                     '<div class="draw-wheel-rim"></div>' +
                     '<div class="draw-wheel" id="drawWheel">' + boxes + '</div>' +
-                    '<div class="draw-wheel-center" id="wheelCenter">🎟️</div>' +
+                    '<div class="draw-wheel-center" id="wheelCenter"><i class="bi bi-ticket-perforated"></i></div>' +
                 '</div>' +
                 '<div class="fs-5 text-muted" id="stageStatus">' + escapeHtml(status) + '</div>' +
                 '<div id="winnerReveal" style="display:none;"></div>' +
@@ -672,7 +672,7 @@ require_once __DIR__ . '/../includes/navbar.php';
     function renderWaitingSales() {
         stage.innerHTML = '' +
             '<div class="card-body text-center py-5">' +
-                '<div class="display-6 mb-3">⏳</div>' +
+                '<div class="display-6 mb-3"><i class="bi bi-hourglass-split"></i></div>' +
                 '<h4 class="fw-bold">Waiting for ticket sales to close</h4>' +
                 '<p class="text-muted mb-0">Close sales from the Events page and the draw will start automatically.</p>' +
             '</div>';
@@ -682,7 +682,7 @@ require_once __DIR__ . '/../includes/navbar.php';
     function renderCompleted() {
         stage.innerHTML = '' +
             '<div class="card-body text-center py-5">' +
-                '<div class="display-6 mb-3">🎉</div>' +
+                '<div class="display-6 mb-3"><i class="bi bi-stars"></i></div>' +
                 '<h4 class="fw-bold">All prizes have been drawn!</h4>' +
                 '<p class="text-muted mb-0">Congratulations to all the winners.</p>' +
             '</div>';
@@ -692,7 +692,7 @@ require_once __DIR__ . '/../includes/navbar.php';
     function renderError(msg) {
         stage.innerHTML = '' +
             '<div class="card-body text-center py-5">' +
-                '<div class="display-6 mb-3">⚠️</div>' +
+                '<div class="display-6 mb-3"><i class="bi bi-exclamation-triangle-fill"></i></div>' +
                 '<h4 class="fw-bold text-danger">' + escapeHtml(msg) + '</h4>' +
             '</div>';
         stage.dataset.state = 'error';
@@ -808,12 +808,12 @@ require_once __DIR__ . '/../includes/navbar.php';
 
     function renderWinnerInPlace(w, completed) {
         const buttonHtml = completed
-            ? '<div class="mt-4 fs-4 fw-bold text-success">🎉 All prizes have been drawn!</div>'
-            : '<button id="btnNextDraw" class="btn btn-primary btn-lg mt-4 px-5">▶ Start Next Prize Announcement</button>';
+            ? '<div class="mt-4 fs-4 fw-bold text-success"><i class="bi bi-stars"></i> All prizes have been drawn!</div>'
+            : '<button id="btnNextDraw" class="btn btn-primary btn-lg mt-4 px-5"><i class="bi bi-play-fill"></i> Start Next Prize Announcement</button>';
 
         stage.innerHTML = '' +
             '<div class="card-body text-center py-5">' +
-                '<div class="fs-3 text-uppercase text-warning fw-bold mb-2">🎉 Winner 🎉</div>' +
+                '<div class="fs-3 text-uppercase text-warning fw-bold mb-2"><i class="bi bi-stars"></i> Winner <i class="bi bi-stars"></i></div>' +
                 '<div class="display-5 fw-bold mb-1">' + escapeHtml(w.student_name) + '</div>' +
                 '<div class="fs-4 text-muted mb-3">' + escapeHtml(w.class_name) + '</div>' +
                 '<div class="d-inline-block winner-prize-tag">' + escapeHtml(w.prize_name) + '</div>' +
@@ -842,7 +842,7 @@ require_once __DIR__ . '/../includes/navbar.php';
 
     /*
     |--------------------------------------------------------------------------
-    | Draw cycle — one spin per prize, then wait for the button
+    | Draw cycle - one spin per prize, then wait for the button
     |--------------------------------------------------------------------------
     */
 
@@ -976,7 +976,7 @@ require_once __DIR__ . '/../includes/navbar.php';
 
     function showLetsStart() {
         const ov = ensureCountdownOverlay();
-        ov.innerHTML = '<div class="draw-lets-start">🎉 Let\'s Start!</div>';
+        ov.innerHTML = '<div class="draw-lets-start"><i class="bi bi-stars"></i> Let\'s Start!</div>';
     }
 
     function clearCountdown() {
@@ -1095,7 +1095,7 @@ require_once __DIR__ . '/../includes/navbar.php';
 
         if (s.next_prize && secsLeft > 0) {
 
-            // Draw time not reached yet — show the wheel, then count down 10..0.
+            // Draw time not reached yet - show the wheel, then count down 10..0.
             busy = true;
             try {
                 await waitForDrawTime(s);

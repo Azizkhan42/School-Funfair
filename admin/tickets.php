@@ -300,7 +300,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                                 </td>
 
                                 <td>
-                                    <?= htmlspecialchars($ticket['teacher_name'] ?? '—') ?>
+                                    <?= htmlspecialchars($ticket['teacher_name'] ?? '&mdash;') ?>
                                 </td>
 
                                 <td>

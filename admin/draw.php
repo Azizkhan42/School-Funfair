@@ -297,7 +297,7 @@ require_once __DIR__ . '/../includes/navbar.php';
         <div class="alert alert-success">
 
             <h5 class="alert-heading">
-                🎉 Winner Drawn!
+                <i class="bi bi-stars"></i> Winner Drawn!
             </h5>
 
             <div class="mt-2">
@@ -481,7 +481,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                                     class="btn btn-success btn-sm"
                                     onclick="return confirm('Auto-draw all remaining prizes now?');"
                                 >
-                                    ⚡ Auto-Draw All
+                                    <i class="bi bi-lightning-charge-fill"></i> Auto-Draw All
                                 </a>
 
                             <?php endif; ?>
@@ -583,7 +583,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                                                             class="btn btn-sm btn-primary"
                                                             onclick="return confirm('Draw a winner for this prize?');"
                                                         >
-                                                            🎲 Draw Winner
+                                                            <i class="bi bi-dice-5"></i> Draw Winner
                                                         </a>
 
                                                     <?php else: ?>
@@ -597,7 +597,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                                                 <?php else: ?>
 
                                                     <span class="text-muted">
-                                                        —
+                                                        &mdash;
                                                     </span>
 
                                                 <?php endif; ?>
@@ -630,7 +630,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                     <div class="card-body">
 
                         <h5 class="fw-bold mb-3">
-                            🏆 Winners Drawn
+                            <i class="bi bi-trophy-fill"></i> Winners Drawn
                         </h5>
 
                         <?php if (count($winners) === 0): ?>

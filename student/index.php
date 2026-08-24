@@ -229,8 +229,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 require_once __DIR__ . '/../includes/navbar.php';
 
-require_once __DIR__ . '/../includes/student-nav.php';
-
 /*
 |--------------------------------------------------------------------------
 | Events accepting registrations (DRAFT / OPEN)
@@ -317,88 +315,18 @@ $myRegsStmt->execute([
 
 $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
 
+$currentView = $_GET['view'] ?? '';
+
+if ($currentView === '' && isset($_POST['view'])) {
+    $currentView = $_POST['view'];
+}
+
+if (!in_array($currentView, ['dashboard', 'events', 'registrations'], true)) {
+    $currentView = 'dashboard';
+}
+
 ?>
-
 <div class="container py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <div>
-            <h2 class="fw-bold mb-1">
-                🎓 Student Portal
-            </h2>
-
-            <p class="text-muted mb-0">
-                Register for events. Your concern teacher will then issue your ticket.
-            </p>
-        </div>
-
-    </div>
-
-    <div class="card border-0 shadow-sm mb-4">
-
-        <div class="card-body">
-
-            <form
-                method="GET"
-                class="row g-3 align-items-center"
-            >
-
-                <div class="col-md-6">
-
-                    <label class="form-label fw-semibold mb-1">
-                        Who are you?
-                    </label>
-
-                    <select
-                        name="student_id"
-                        class="form-select"
-                        onchange="this.form.submit()"
-                    >
-
-                        <?php foreach ($allStudents as $student): ?>
-
-                            <option
-                                value="<?= $student['student_id'] ?>"
-                                <?= $student['student_id'] == $studentId ? 'selected' : '' ?>
-                            >
-                                <?= htmlspecialchars($student['student_name']) ?>
-                                —
-                                <?= htmlspecialchars($student['class_name']) ?>
-                            </option>
-
-                        <?php endforeach; ?>
-
-                    </select>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <div class="border-start ps-3 pt-2 pt-md-0">
-
-                        <div class="fw-bold">
-                            👤 <?= htmlspecialchars($currentStudent['student_name']) ?>
-                        </div>
-
-                        <div class="text-muted small">
-                            <?= htmlspecialchars($currentStudent['class_name']) ?>
-                            • Concern teacher:
-                            <strong>
-                                <?= htmlspecialchars($currentStudent['teacher_name'] ?? '—') ?>
-                            </strong>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
 
     <?php if (!empty($errors)): ?>
 
@@ -423,60 +351,313 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
     <?php if ($success): ?>
 
         <div class="alert alert-success">
-            ✅ <?= htmlspecialchars($success) ?>
+            <i class="bi bi-check-circle-fill me-1"></i>
+            <?= htmlspecialchars($success) ?>
         </div>
 
     <?php endif; ?>
 
+    <?php if ($currentView === 'dashboard'): ?>
 
-    <div class="row">
+        <!--
+        |--------------------------------------------------------------------------
+        | Dashboard: main cards
+        |--------------------------------------------------------------------------
+        -->
 
-        <div class="col-lg-7">
+        <div class="mb-4">
 
-            <div class="card border-0 shadow-sm mb-4">
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-mortarboard text-primary me-2"></i>Welcome,
+                <?= htmlspecialchars($currentStudent['student_name']) ?>!
+            </h2>
 
-                <div class="card-body">
+            <p class="text-muted mb-0">
+                <?= htmlspecialchars($currentStudent['class_name']) ?>
+                &bull; Concern teacher:
+                <strong>
+                    <?= htmlspecialchars($currentStudent['teacher_name'] ?? '-') ?>
+                </strong>
+            </p>
 
-                    <h5 class="fw-bold mb-3">
-                        🎟️ Events open for registration
-                    </h5>
+        </div>
 
-                    <?php if (count($events) === 0): ?>
+        <div class="row g-4">
 
-                        <p class="text-muted mb-0">
-                            No events are currently accepting registrations.
-                        </p>
+            <div class="col-md-4">
 
-                    <?php else: ?>
+                <a
+                    href="?view=events"
+                    class="text-decoration-none"
+                >
+                    <div class="card border-0 shadow-sm h-100 student-menu-card">
 
-                        <?php foreach ($events as $event): ?>
+                        <div class="card-body text-center py-5">
 
-                            <div class="border rounded-3 p-3 mb-3">
+                            <div class="student-card-icon bi-calendar-event">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
 
-                                <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mt-3 mb-1">
+                                Available Events
+                            </h5>
 
-                                    <div>
+                            <p class="text-muted small mb-0">
+                                See events and apply for tickets
+                            </p>
 
-                                        <div class="fw-bold fs-5">
-                                            <?= htmlspecialchars($event['event_name']) ?>
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <a
+                    href="?view=registrations"
+                    class="text-decoration-none"
+                >
+                    <div class="card border-0 shadow-sm h-100 student-menu-card">
+
+                        <div class="card-body text-center py-5">
+
+                            <div class="student-card-icon bi-clipboard-check">
+                                <i class="bi bi-clipboard-check"></i>
+                            </div>
+
+                            <h5 class="fw-bold mt-3 mb-1">
+                                My Registrations
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Track your applications
+                                (<?= count($myRegs) ?>)
+                            </p>
+
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <a
+                    href="tickets.php"
+                    class="text-decoration-none"
+                >
+                    <div class="card border-0 shadow-sm h-100 student-menu-card">
+
+                        <div class="card-body text-center py-5">
+
+                            <div class="student-card-icon bi-ticket-perforated">
+                                <i class="bi bi-ticket-perforated"></i>
+                            </div>
+
+                            <h5 class="fw-bold mt-3 mb-1">
+                                My Tickets
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                View your issued lucky draw tickets
+                            </p>
+
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+
+        </div>
+
+    <?php elseif ($currentView === 'events'): ?>
+
+        <!--
+        |--------------------------------------------------------------------------
+        | Available Events: event cards -> click to apply (modal)
+        |--------------------------------------------------------------------------
+        -->
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h2 class="fw-bold mb-1">
+                    <i class="bi bi-calendar-event text-primary me-2"></i>Available Events
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Click on an event card to see details and apply.
+                </p>
+            </div>
+
+            <a
+                href="index.php"
+                class="btn btn-outline-secondary btn-sm"
+            >
+                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
+
+        </div>
+
+        <?php if (count($events) === 0): ?>
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center py-5">
+                    <h5>No events available right now</h5>
+                    <p class="text-muted mb-0">
+                        Please check back later.
+                    </p>
+                </div>
+
+            </div>
+
+        <?php else: ?>
+
+            <div class="row g-4">
+
+                <?php foreach ($events as $index => $event): ?>
+
+                    <?php
+
+                    $isRegistered = (bool)$event['is_registered'];
+
+                    $modalId = 'eventApplyModal' . (int)$event['event_id'];
+
+                    $maxTickets = (int)$event['max_tickets_per_student'];
+
+                    ?>
+
+                    <div class="col-md-6 col-xl-4">
+
+                        <div
+                            class="card border-0 shadow-sm h-100 student-event-card"
+                            data-bs-toggle="modal"
+                            data-bs-target="#<?= $modalId ?>"
+                            role="button"
+                        >
+
+                            <div class="card-body">
+
+                                <span class="badge bg-<?= $event['status'] === 'OPEN' ? 'success' : 'secondary' ?> mb-2">
+                                    <?= htmlspecialchars($event['status']) ?>
+                                </span>
+
+                                <?php if ($isRegistered): ?>
+
+                                    <span class="badge bg-info text-dark mb-2 ms-1">
+                                        <i class="bi bi-patch-check-fill me-1"></i>Applied
+                                    </span>
+
+                                <?php endif; ?>
+
+                                <h5 class="fw-bold mb-2">
+                                    <?= htmlspecialchars($event['event_name']) ?>
+                                </h5>
+
+                                <ul class="list-unstyled small text-muted mb-3">
+
+                                    <li class="mb-1">
+                                        <i class="bi bi-calendar3 me-2"></i>Event Date:
+                                        <?= date('d M Y', strtotime($event['sales_end'])) ?>
+                                    </li>
+
+                                    <li class="mb-1">
+                                        <i class="bi bi-cash-coin me-2"></i>Ticket Price:
+                                        Rs. <?= number_format($event['ticket_price'], 2) ?>
+                                    </li>
+
+                                    <li>
+                                        <i class="bi bi-ticket-perforated me-2"></i>Max Tickets:
+                                        <?= $maxTickets ?> per student
+                                    </li>
+
+                                </ul>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm <?= $isRegistered ? 'btn-outline-primary' : 'btn-primary' ?>"
+                                >
+                                    <?= $isRegistered ? 'View Application' : 'Apply Now' ?>
+                                    <?php if (!$isRegistered): ?>
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    <?php endif; ?>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Apply modal for this event -->
+                    <div
+                        class="modal fade"
+                        id="<?= $modalId ?>"
+                        tabindex="-1"
+                        aria-hidden="true"
+                    >
+
+                        <div class="modal-dialog modal-dialog-centered">
+
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+
+                                    <h5 class="modal-title fw-bold">
+                                        <?= htmlspecialchars($event['event_name']) ?>
+                                    </h5>
+
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <ul class="list-group list-group-flush mb-3">
+
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Status</span>
+                                            <strong><?= htmlspecialchars($event['status']) ?></strong>
+                                        </li>
+
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Event Date</span>
+                                            <strong><?= date('d M Y', strtotime($event['sales_end'])) ?></strong>
+                                        </li>
+
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Ticket Price</span>
+                                            <strong>Rs. <?= number_format($event['ticket_price'], 2) ?></strong>
+                                        </li>
+
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Sales Window</span>
+                                            <strong>
+                                                <?= date('d M', strtotime($event['sales_start'])) ?>
+                                                &mdash;
+                                                <?= date('d M Y', strtotime($event['sales_end'])) ?>
+                                            </strong>
+                                        </li>
+
+                                    </ul>
+
+                                    <?php if ($isRegistered): ?>
+
+                                        <div class="alert alert-info mb-3">
+                                            <i class="bi bi-info-circle-fill me-1"></i>
+                                            You have already applied for this event.
+                                            Your teacher will issue your ticket soon.
                                         </div>
-
-                                        <div class="text-muted small">
-                                            Event Date:
-                                            <?= date('d M Y', strtotime($event['sales_end'])) ?>
-                                            •
-                                            Ticket Price:
-                                            Rs.
-                                            <?= number_format($event['ticket_price'], 2) ?>
-                                        </div>
-
-                                        <span class="badge bg-<?= $event['status'] === 'OPEN' ? 'success' : 'secondary' ?> mt-1">
-                                            <?= htmlspecialchars($event['status']) ?>
-                                        </span>
-
-                                    </div>
-
-                                    <?php if ($event['is_registered']): ?>
 
                                         <form method="POST">
 
@@ -492,19 +673,25 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
                                                 value="cancel"
                                             >
 
+                                            <input
+                                                type="hidden"
+                                                name="view"
+                                                value="events"
+                                            >
+
                                             <button
                                                 type="submit"
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Cancel your registration for this event?');"
+                                                class="btn btn-outline-danger w-100"
+                                                onclick="return confirm('Cancel your application for this event?');"
                                             >
-                                                Cancel Registration
+                                                Cancel Application
                                             </button>
 
                                         </form>
 
                                     <?php else: ?>
 
-                                        <form method="POST" class="text-end">
+                                        <form method="POST">
 
                                             <input
                                                 type="hidden"
@@ -518,27 +705,31 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
                                                 value="register"
                                             >
 
-                                            <div class="mb-2">
+                                            <input
+                                                type="hidden"
+                                                name="view"
+                                                value="events"
+                                            >
 
-                                                <label class="form-label small fw-semibold mb-1">
-                                                    🎟️ How many tickets do you want?
+                                            <div class="mb-3">
+
+                                                <label class="form-label fw-semibold mb-1">
+                                                    <i class="bi bi-ticket-perforated me-1"></i>
+                                                    How many tickets do you want?
                                                 </label>
 
                                                 <select
                                                     name="ticket_quantity"
-                                                    class="form-select form-select-sm"
-                                                    style="min-width: 130px;"
+                                                    class="form-select"
                                                     required
                                                 >
 
-                                                    <?php for ($i = 1; $i <= (int)$event['max_tickets_per_student']; $i++): ?>
+                                                    <?php for ($i = 1; $i <= $maxTickets; $i++): ?>
 
                                                         <option value="<?= $i ?>">
                                                             <?= $i ?>
                                                             Ticket<?= $i > 1 ? 's' : '' ?>
-                                                            (Rs.
-                                                            <?= number_format($i * $event['ticket_price'], 0) ?>
-                                                            )
+                                                            (Rs. <?= number_format($i * $event['ticket_price'], 0) ?>)
                                                         </option>
 
                                                     <?php endfor; ?>
@@ -549,9 +740,10 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
 
                                             <button
                                                 type="submit"
-                                                class="btn btn-sm btn-primary"
+                                                class="btn btn-primary w-100"
                                             >
-                                                Register
+                                                <i class="bi bi-ticket-detailed-fill me-1"></i>
+                                                Apply For This Event
                                             </button>
 
                                         </form>
@@ -562,130 +754,154 @@ $myRegs = $myRegsStmt->fetchAll(PDO::FETCH_ASSOC);
 
                             </div>
 
-                        <?php endforeach; ?>
+                        </div>
 
-                    <?php endif; ?>
+                    </div>
 
-                </div>
+                <?php endforeach; ?>
 
             </div>
 
+        <?php endif; ?>
+
+    <?php else: ?>
+
+        <!--
+        |--------------------------------------------------------------------------
+        | My Registrations
+        |--------------------------------------------------------------------------
+        -->
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h2 class="fw-bold mb-1">
+                    <i class="bi bi-clipboard-check text-primary me-2"></i>My Registrations
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Applications for
+                    <strong><?= htmlspecialchars($currentStudent['student_name']) ?></strong>.
+                </p>
+            </div>
+
+            <a
+                href="index.php"
+                class="btn btn-outline-secondary btn-sm"
+            >
+                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
+
         </div>
 
-        <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
 
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
 
-                <div class="card-body">
+                <?php if (count($myRegs) === 0): ?>
 
-                    <h5 class="fw-bold mb-3">
-                        📋 My Registrations
-                    </h5>
+                    <p class="text-muted mb-0 text-center py-4">
+                        You have not registered for any event yet.
 
-                    <?php if (count($myRegs) === 0): ?>
+                        <a href="?view=events">Browse available events</a>.
+                    </p>
 
-                        <p class="text-muted mb-0">
-                            You have not registered for any event yet.
-                        </p>
+                <?php else: ?>
 
-                    <?php else: ?>
+                    <ul class="list-group list-group-flush">
 
-                        <ul class="list-group list-group-flush">
+                        <?php foreach ($myRegs as $reg): ?>
 
-                            <?php foreach ($myRegs as $reg): ?>
+                            <?php
 
-                                <?php
+                            $isIssued = $reg['registration_status'] === 'TICKET_ISSUED';
 
-                                $isIssued = $reg['registration_status'] === 'TICKET_ISSUED';
+                            ?>
 
-                                ?>
+                            <li class="list-group-item">
 
-                                <li class="list-group-item">
+                                <div class="d-flex justify-content-between">
 
-                                    <div class="d-flex justify-content-between">
+                                    <div>
 
-                                        <div>
+                                        <strong>
+                                            <?= htmlspecialchars($reg['event_name']) ?>
+                                        </strong>
 
-                                            <strong>
-                                                <?= htmlspecialchars($reg['event_name']) ?>
-                                            </strong>
-
-                                            <div class="text-muted small">
-                                                Event Date:
-                                                <?= date('d M Y', strtotime($reg['event_date'])) ?>
-                                                •
-                                                Registered:
-                                                <?= date('d M Y h:i A', strtotime($reg['registered_at'])) ?>
-                                            </div>
-
-                                            <div class="small mt-1">
-                                                Requested:
-                                                <span class="fw-semibold">
-                                                    🎟️
-                                                    <?= (int)$reg['ticket_quantity'] ?>
-                                                    ticket<?= (int)$reg['ticket_quantity'] > 1 ? 's' : '' ?>
-                                                </span>
-                                            </div>
-
-                                            <div class="small mt-1">
-                                                Ticket:
-                                                <?php if ($isIssued && (int)$reg['ticket_count'] > 0): ?>
-                                                    <span class="fw-bold text-success">
-                                                        🎟️
-                                                        <?= (int)$reg['ticket_count'] ?>
-                                                        issued
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="text-muted">
-                                                        Pending
-                                                    </span>
-                                                <?php endif; ?>
-                                            </div>
-
+                                        <div class="text-muted small">
+                                            Event Date:
+                                            <?= date('d M Y', strtotime($reg['event_date'])) ?>
+                                            &bull;
+                                            Registered:
+                                            <?= date('d M Y h:i A', strtotime($reg['registered_at'])) ?>
                                         </div>
 
-                                        <div class="text-end">
-
-                                            <span class="badge bg-<?= $isIssued ? 'success' : 'warning text-dark' ?>">
-                                                <?= $isIssued ? 'Ticket Issued' : 'Pending' ?>
+                                        <div class="small mt-1">
+                                            Requested:
+                                            <span class="fw-semibold">
+                                                <i class="bi bi-ticket-perforated me-1"></i>
+                                                <?= (int)$reg['ticket_quantity'] ?>
+                                                ticket<?= (int)$reg['ticket_quantity'] > 1 ? 's' : '' ?>
                                             </span>
+                                        </div>
 
-                                            <?php if ($isIssued): ?>
-
-                                                <div class="small mt-1">
-                                                    Total:
-                                                    Rs.
-                                                    <?= number_format((float)$reg['total_amount'], 2) ?>
-                                                </div>
-
-                                                <a
-                                                    href="tickets.php"
-                                                    class="btn btn-sm btn-outline-primary mt-1"
-                                                >
-                                                    View Tickets
-                                                </a>
-
+                                        <div class="small mt-1">
+                                            Ticket:
+                                            <?php if ($isIssued && (int)$reg['ticket_count'] > 0): ?>
+                                                <span class="fw-bold text-success">
+                                                    <i class="bi bi-patch-check-fill me-1"></i>
+                                                    <?= (int)$reg['ticket_count'] ?>
+                                                    issued
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="text-muted">
+                                                    Pending
+                                                </span>
                                             <?php endif; ?>
-
                                         </div>
 
                                     </div>
 
-                                </li>
+                                    <div class="text-end">
 
-                            <?php endforeach; ?>
+                                        <span class="badge bg-<?= $isIssued ? 'success' : 'warning text-dark' ?>">
+                                            <?= $isIssued ? 'Ticket Issued' : 'Pending' ?>
+                                        </span>
 
-                        </ul>
+                                        <?php if ($isIssued): ?>
 
-                    <?php endif; ?>
+                                            <div class="small mt-1">
+                                                Total:
+                                                Rs.
+                                                <?= number_format((float)$reg['total_amount'], 2) ?>
+                                            </div>
 
-                </div>
+                                            <a
+                                                href="tickets.php"
+                                                class="btn btn-sm btn-outline-primary mt-1"
+                                            >
+                                                View Tickets
+                                            </a>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                </div>
+
+                            </li>
+
+                        <?php endforeach; ?>
+
+                    </ul>
+
+                <?php endif; ?>
 
             </div>
 
         </div>
 
-    </div>
+    <?php endif; ?>
 
 </div>
 

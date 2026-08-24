@@ -2,6 +2,258 @@
     animation: live-pulse 1.5s ease-in-out infinite;
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| App layout (sidebar + main)
+|--------------------------------------------------------------------------
+*/
+
+:root {
+    --app-sidebar-width: 268px;
+    --app-sidebar-bg-top: #16233f;
+    --app-sidebar-bg-bottom: #0d1728;
+    --app-link-color: #a7b4cc;
+    --app-primary: #3b82f6;
+}
+
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #f1f5f9;
+}
+
+.app-sidebar {
+    width: var(--app-sidebar-width);
+    background: linear-gradient(180deg, var(--app-sidebar-bg-top), var(--app-sidebar-bg-bottom));
+    color: var(--app-link-color);
+    flex-shrink: 0;
+}
+
+@media (min-width: 992px) {
+    .app-sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+    }
+}
+
+.app-sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 18px 18px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+}
+
+.app-brand-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    color: #fff;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+    flex-shrink: 0;
+}
+
+.app-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    color: #fff;
+    font-size: 1.12rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.app-brand-text small {
+    color: #7c8db0;
+    font-size: 0.66rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+.app-sidebar-body {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 14px 6px;
+}
+
+.app-sidebar-section {
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: #5e6f92;
+    padding: 12px 12px 8px;
+}
+
+.app-sidebar-divider {
+    height: 1px;
+    margin: 14px 12px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.app-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 13px;
+    margin-bottom: 3px;
+    border-radius: 11px;
+    color: var(--app-link-color);
+    text-decoration: none;
+    font-size: 0.93rem;
+    font-weight: 500;
+    position: relative;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.app-nav-link:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+.app-nav-link.active {
+    background: linear-gradient(135deg, var(--app-primary), #2563eb);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.42);
+}
+
+.app-nav-icon {
+    width: 22px;
+    display: inline-flex;
+    justify-content: center;
+    font-size: 1.06rem;
+    line-height: 1;
+}
+
+.app-nav-icon .bi {
+    transition: transform 0.15s ease;
+}
+
+.app-nav-link.active::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    border-radius: 0 4px 4px 0;
+    background: #60a5fa;
+}
+
+.app-main {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: linear-gradient(90deg, var(--app-sidebar-bg-top), var(--app-sidebar-bg-bottom));
+}
+
+.app-topbar-btn {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.app-topbar-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.app-content {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.app-footer {
+    margin-top: auto;
+    padding: 18px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Student portal cards
+|--------------------------------------------------------------------------
+*/
+
+.student-menu-card,
+.student-event-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+}
+
+.student-menu-card:hover,
+.student-event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(30, 41, 59, 0.15) !important;
+}
+
+.student-card-icon {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.1rem;
+    color: #fff;
+    border-radius: 20px;
+}
+
+.student-card-icon.bi-calendar-event {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35);
+}
+
+.student-card-icon.bi-clipboard-check {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    box-shadow: 0 10px 22px rgba(245, 158, 11, 0.35);
+}
+
+.student-card-icon.bi-ticket-perforated {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 10px 22px rgba(16, 185, 129, 0.35);
+}
+
+.text-body {
+    color: inherit;
+}
+
+
+
 @keyframes live-pulse {
     0%, 100% {
         opacity: 1;

@@ -1,14 +1,16 @@
-<footer class="mt-5 py-4 bg-light border-top">
+        </div>
 
-    <div class="container text-center">
+        <footer class="app-footer">
 
-        <p class="mb-0 text-muted">
-            School FunFair Lucky Draw System
-        </p>
+            <p class="mb-0">
+                School FunFair Lucky Draw System
+            </p>
 
-    </div>
+        </footer>
 
-</footer>
+    </main>
+
+</div>
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">

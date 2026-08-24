@@ -1,14 +1,12 @@
 <?php
 
-require_once __DIR__ . '/../../includes/student-session.php';
+require_once __DIR__ . '/../includes/student-session.php';
 
 $pageTitle = 'My Tickets';
 
-require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
-require_once __DIR__ . '/../../includes/navbar.php';
-
-require_once __DIR__ . '/../../includes/student-nav.php';
+require_once __DIR__ . '/../includes/navbar.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +49,7 @@ $tickets = $ticketsStmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div>
             <h2 class="fw-bold mb-1">
-                🎟️ My Tickets
+                <i class="bi bi-ticket-perforated"></i> My Tickets
             </h2>
 
             <p class="text-muted mb-0">
@@ -177,6 +175,6 @@ $tickets = $ticketsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 
-require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';
 
 ?>

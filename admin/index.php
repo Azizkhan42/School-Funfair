@@ -169,28 +169,28 @@ require_once __DIR__ . '/../includes/navbar.php';
             href="draw.php"
             class="btn btn-primary"
         >
-            🎲 Draw Engine
+            <i class="bi bi-dice-5"></i> Draw Engine
         </a>
 
         <a
             href="live.php"
             class="btn btn-outline-danger"
         >
-            📺 Live TV / Projector
+            <i class="bi bi-broadcast-pin"></i> Live TV / Projector
         </a>
 
         <a
             href="reports.php"
             class="btn btn-outline-success"
         >
-            💰 Cash Collection & Reports
+            <i class="bi bi-cash-coin"></i> Cash Collection & Reports
         </a>
 
         <a
             href="teacher/index.php"
             class="btn btn-outline-secondary"
         >
-            👩‍🏫 Teacher Portal
+            <i class="bi bi-person-badge"></i> Teacher Portal
         </a>
 
     </div>

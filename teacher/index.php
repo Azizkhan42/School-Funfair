@@ -8,8 +8,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 require_once __DIR__ . '/../includes/navbar.php';
 
-require_once __DIR__ . '/../includes/teacher-nav.php';
-
 
 /*
 |--------------------------------------------------------------------------
@@ -78,7 +76,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             href="registrations.php"
             class="btn btn-outline-primary"
         >
-            📋 FunFair Registrations
+            <i class="bi bi-clipboard-check"></i> FunFair Registrations
         </a>
 
     </div>
@@ -125,7 +123,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="border-start ps-3 pt-2 pt-md-0">
 
                         <div class="fw-bold">
-                            👩‍🏫 <?= htmlspecialchars($currentTeacher['teacher_name']) ?>
+                            <i class="bi bi-person-badge"></i> <?= htmlspecialchars($currentTeacher['teacher_name']) ?>
                         </div>
 
                         <div class="text-muted small">
@@ -155,7 +153,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 An event only becomes available here when it is
                 <strong>OPEN</strong>
                 and the current date/time falls inside its
-                sales period (sales start → sales end).
+                sales period (sales start &rarr; sales end).
             </div>
 
             <div class="mt-1">
@@ -212,12 +210,12 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="mt-2">
 
                                 <span class="badge bg-info text-dark">
-                                    🎓 My students registered:
+                                    <i class="bi bi-mortarboard"></i> My students registered:
                                     <?= (int)$event['my_registered'] ?>
                                 </span>
 
                                 <span class="badge bg-secondary">
-                                    🎟️ Tickets I issued:
+                                    <i class="bi bi-ticket-perforated"></i> Tickets I issued:
                                     <?= (int)$event['my_issued'] ?>
                                 </span>
 

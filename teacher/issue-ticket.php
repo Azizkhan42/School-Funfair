@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../includes/teacher-session.php';
+require_once __DIR__ . '/../includes/teacher-session.php';
 
-require_once __DIR__ . '/../../includes/audit.php';
+require_once __DIR__ . '/../includes/audit.php';
 
 
 $eventId = filter_input(
@@ -92,9 +92,9 @@ if (isset($blockMessage)) {
 
     $pageTitle = 'Issue Lucky Draw Tickets';
 
-    require_once __DIR__ . '/../../includes/header.php';
+    require_once __DIR__ . '/../includes/header.php';
 
-    require_once __DIR__ . '/../../includes/navbar.php';
+    require_once __DIR__ . '/../includes/navbar.php';
 
     ?>
 
@@ -148,7 +148,7 @@ if (isset($blockMessage)) {
                 href="index.php"
                 class="btn btn-secondary"
             >
-                ← Back to Teacher Portal
+                <i class="bi bi-arrow-left"></i> Back to Teacher Portal
             </a>
 
         </div>
@@ -157,7 +157,7 @@ if (isset($blockMessage)) {
 
     <?php
 
-    require_once __DIR__ . '/../../includes/footer.php';
+    require_once __DIR__ . '/../includes/footer.php';
 
     exit;
 }
@@ -656,11 +656,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageTitle = 'Issue Lucky Draw Tickets';
 
-require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
-require_once __DIR__ . '/../../includes/navbar.php';
-
-require_once __DIR__ . '/../../includes/teacher-nav.php';
+require_once __DIR__ . '/../includes/navbar.php';
 
 ?>
 
@@ -707,7 +705,7 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
         <div class="alert alert-success">
 
             <h5 class="alert-heading">
-                🎟️ Tickets Issued Successfully
+                <i class="bi bi-ticket-perforated"></i> Tickets Issued Successfully
             </h5>
 
             <hr>
@@ -800,14 +798,14 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
                                             $student['student_name']
                                         ) ?>
 
-                                        —
+                                        -
                                         <?= htmlspecialchars(
                                             $student['class_name']
                                         ) ?>
 
                                         <?php if ($isStudentIssued): ?>
 
-                                            (✅ tickets issued)
+                                            (<i class="bi bi-check-circle-fill"></i> tickets issued)
 
                                         <?php else: ?>
 
@@ -986,7 +984,7 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
                 <div class="card-body">
 
                     <h5 class="fw-bold">
-                        🎓 My Students — Status
+                        <i class="bi bi-mortarboard"></i> My Students - Status
                     </h5>
 
                     <hr>
@@ -1020,7 +1018,7 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
 
                                         <div class="text-muted small">
                                             <?= htmlspecialchars($student['class_name']) ?>
-                                            • requested
+                                            - requested
                                             <?= (int)$student['requested_quantity'] ?>
                                         </div>
                                     </div>
@@ -1028,7 +1026,7 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
                                     <?php if ($isStudentIssued): ?>
 
                                         <span class="badge bg-success">
-                                            ✅ Issued
+                                            <i class="bi bi-check-circle-fill"></i> Issued
                                             <?= (int)$student['issued_count'] ?>
                                         </span>
 
@@ -1092,7 +1090,7 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
         hint.innerHTML =
             'Student requested <strong>' + requested + '</strong> ticket' +
             (requested > 1 ? 's' : '') +
-            ' — quantity pre-filled. Already issued: <strong>' +
+            ' - quantity pre-filled. Already issued: <strong>' +
             issued + '</strong>.';
     }
 
@@ -1104,6 +1102,6 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
 
 <?php
 
-require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';
 
 ?>

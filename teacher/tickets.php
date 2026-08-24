@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../includes/teacher-session.php';
+require_once __DIR__ . '/../includes/teacher-session.php';
 
 $selectedEvent = filter_input(INPUT_GET, 'event_id', FILTER_VALIDATE_INT);
 
@@ -113,11 +113,9 @@ $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC);
 
 $pageTitle = 'My Ticket History';
 
-require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
-require_once __DIR__ . '/../../includes/navbar.php';
-
-require_once __DIR__ . '/../../includes/teacher-nav.php';
+require_once __DIR__ . '/../includes/navbar.php';
 
 ?>
 
@@ -348,6 +346,6 @@ require_once __DIR__ . '/../../includes/teacher-nav.php';
 
 <?php
 
-require_once __DIR__ . '/../../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';
 
 ?>
